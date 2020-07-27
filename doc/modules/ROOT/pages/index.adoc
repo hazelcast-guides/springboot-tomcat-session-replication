@@ -5,17 +5,17 @@ You can clone this repository, work on it and create your guide, and then push t
 ////
 
 :github-address: [github-repo-address-of-your-guide]
-
-:templates-url: https://raw.githubusercontent.com/hazelcast-guides/adoc-templates/master
+:hazelcast: Hazelcast IMDG
+:framework: Spring Boot
 
 // Use this relative url if you are going to publish the guide on the guides site.
 // Note that this url will not work locally and raise asciidoctor errors.
 // So, complete the guide with the above url and set the below one just before 
 // publishing on the guides site.
 //
-// :templates-url: templates:ROOT:page$/
+:templates-url: templates:ROOT:page$
 
-= Title
+= Spring Boot Tomcat Session Replication using Hazelcast
 
 // Content entered directly below the header but before the first section heading is called the preamble.
 
@@ -23,19 +23,122 @@ include::{templates-url}/link-to-repo.adoc[]
 
 == What You’ll Learn
 
-// Define the problem and tell reader what he/she will learn from this guide.
+Spring Boot is a framework that helps to build microservices easily. In a microservice architecture, there are different options to share data among the running services: one of them is caching, which Spring Boot leverages. It also provides session scope data access using built-in Tomcat HTTP sessions. But when running multiple microservices, it quickly becomes a hassle to replicate sessions and share their data across microservices.
+
+In this guide you will learn how to replicate sessions across microservices to provide session data for all microservice applications.
 
 == Prerequisites
 
-// Define the prerequisites for the guide.
+- ~15 minutes
 
-////
-Write the steps in your guide here by making each step a different section
-////
+include::{templates-url}/microservices/prerequisites.adoc[]
+
+== The Spring Boot Application Structure
+
+The application is a basic Spring Boot application having 3 endpoints:
+
+- / is the homepage returning “Homepage” string only
+- /put is the page where key and value are saved to the current session as an attribute
+- /get is the page where the values in the current session can be obtained by keys
+
+== Session Replication using Hazelcast Tomcat Session Manager
+
+To configure session replication, let's first add some dependencies to the pom.xml file:
+
+[source,xml]
+----
+<dependency>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast-tomcat85-sessionmanager</artifactId>
+    <version>${hazelcast-tomcat-sessionmanager.version}</version>
+</dependency>
+<dependency>
+    <groupId>com.hazelcast</groupId>
+    <artifactId>hazelcast</artifactId>
+    <version>${hazelcast.version}</version>
+</dependency>
+----
+The first dependency is for Hazelcast Tomcat Session Manager, the second one is for Hazelcast IMDG itself.
+
+At this point, only some configuration beans are necessary to enable session replication:
+
+[source,java]
+----
+@Bean
+public Config hazelcastConfig() {
+    Config config = new Config();
+    config.setProperty( "hazelcast.logging.type", "slf4j" );
+    config.setInstanceName("hazelcastInstance");
+    JoinConfig joinConfig = config.getNetworkConfig().getJoin();
+    joinConfig.getMulticastConfig().setEnabled(false);
+    joinConfig.getTcpIpConfig().setEnabled(true).addMember("localhost");
+    return config;
+}
+
+@Bean
+public HazelcastInstance hazelcastInstance(Config hazelcastConfig) {
+    return Hazelcast.getOrCreateHazelcastInstance(hazelcastConfig);
+}
+
+@Bean
+public WebServerFactoryCustomizer<TomcatServletWebServerFactory> customizeTomcat(HazelcastInstance hazelcastInstance) {
+    return (factory) -> {
+        factory.addContextCustomizers(context -> {
+            HazelcastSessionManager manager = new HazelcastSessionManager();
+            manager.setSticky(false);
+            manager.setHazelcastInstanceName("hazelcastInstance");
+            context.setManager(manager);
+        });
+    };
+}
+----
+
+- The first bean creates a Hazelcast `Config` object to configure Hazelcast members. We enable the TCI/IP configuration.
+- The second bean creates the Hazelcast member using the `hazelcastConfig` bean.
+- The third one customizes Tomcat instance in Spring Boot to use Hazelcast Tomcat Session Manager.
+
+Please note that the Hazelcast instance name for `HazelcastSessionManager` object and the instance name for Hazelcast config bean should be the same. Otherwise, `HazelcastSessionManager` wouldn't access the running Hazelcast instance.
+
+== Running the Sample Application
+
+
+Build the application by using maven, make sure you are in the project directory
+[source,bash]
+----
+mvn clean package
+----
+
+Run the application by typing
+[source,bash]
+----
+java -Dserver.port=8080 -jar target/springboot-tomcat-session-replication-0.1.0.jar 
+----
+
+
+
+Open another terminal and rerun the application by typing
+[source,bash]
+----
+java -Dserver.port=8081 -jar target/springboot-tomcat-session-replication-0.1.0.jar 
+----
+
+Now, you can make calls to application endpoints to put data and get it back. Firstly, open another terminal and run the following command to put the data into Hazelcast distributed map:
+
+[source,bash]
+----
+curl --cookie cookies.txt --cookie-jar cookies.txt -s -L "localhost:8080/put?key=myKey&value=hazelcast"
+curl --cookie cookies.txt --cookie-jar cookies.txt -s -L "localhost:8081/get?key=myKey"
+----
+For each command the output should be like the following:
+----
+{"value":"hazelcast"}
+----
+
+Notice we have to use cookies when testing the application since the data is saved in HTTP sessions.
 
 == Summary
 
-// Provide a quick summary
+We created a Spring Boot application that accesses session scope data. To be able to share the session data between each application we used Hazelcast integration. When we  put the key-value pair to our current session as an attribute at port 8080 and we could get the attributes from another port. So we accomplished keeping the session data in each microservice application.
 
 == See Also
 
