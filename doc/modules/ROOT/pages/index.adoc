@@ -4,7 +4,7 @@ This is the base template for Hazelcast integration module guides.
 You can clone this repository, work on it and create your guide, and then push to a new repository.
 ////
 
-:github-address: [github-repo-address-of-your-guide]
+:github-address: https://github.com/hazelcast-guides/springboot-tomcat-session-replication
 :hazelcast: Hazelcast IMDG
 :framework: Spring Boot
 
