@@ -1,6 +1,5 @@
 package guides.hazelcast.tomcatsessionmanager;
 
-@SuppressWarnings("unused")
 public class CommandResponse {
 
     private String value;
