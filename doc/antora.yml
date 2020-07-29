@@ -1,4 +1,3 @@
-name: springboot-tomcat-session-replication    # a brief module name. This will be included in the guide url.
-title:  Spring Boot Tomcat Session Replication using Hazelcast # a brief module title. This will not show up on the website.
+name: springboot-tomcat-session-replication
+title:  Spring Boot Tomcat Session Replication using Hazelcast
 version: master
-

@@ -1,23 +1,10 @@
-////
-This is the base template for Hazelcast integration module guides.
-
-You can clone this repository, work on it and create your guide, and then push to a new repository.
-////
-
 :github-address: https://github.com/hazelcast-guides/springboot-tomcat-session-replication
 :hazelcast: Hazelcast IMDG
 :framework: Spring Boot
-
-// Use this relative url if you are going to publish the guide on the guides site.
-// Note that this url will not work locally and raise asciidoctor errors.
-// So, complete the guide with the above url and set the below one just before 
-// publishing on the guides site.
-//
 :templates-url: templates:ROOT:page$
 
 = Spring Boot Tomcat Session Replication using Hazelcast
 
-// Content entered directly below the header but before the first section heading is called the preamble.
 
 include::{templates-url}/link-to-repo.adoc[]
 
@@ -102,21 +89,21 @@ Please note that the Hazelcast instance name for `HazelcastSessionManager` objec
 == Running the Sample Application
 
 
-Build the application by using maven, make sure you are in the project directory
+In the project directory, build the application:
 [source,bash]
 ----
-mvn clean package
+$ mvn clean package
 ----
 
-Run the application by typing
+Run the application:
 [source,bash]
 ----
-java -Dserver.port=8080 -jar target/springboot-tomcat-session-replication-0.1.0.jar 
+$ java -Dserver.port=8080 -jar target/springboot-tomcat-session-replication-0.1.0.jar 
 ----
 
 
 
-Open another terminal and rerun the application by typing
+Open another terminal and start the second application:
 [source,bash]
 ----
 java -Dserver.port=8081 -jar target/springboot-tomcat-session-replication-0.1.0.jar 
@@ -138,12 +125,9 @@ Notice we have to use cookies when testing the application since the data is sav
 
 == Summary
 
-We created a Spring Boot application that accesses session scope data. To be able to share the session data between each application we used Hazelcast integration. When we  put the key-value pair to our current session as an attribute at port 8080 and we could get the attributes from another port. So we accomplished keeping the session data in each microservice application.
+We created a Spring Boot application that accesses session scope data. To be able to share the session data between each application we used Hazelcast integration. When we  put the key-value pair to our current session as an attribute at port 8080, we could get the attributes from another port. So we accomplished keeping the session data in each microservice application.
 
 == See Also
 
-// Add some links to resources, such as other related guides.
-// Use relative links used on the home page (see https://raw.githubusercontent.com/hazelcast-guides/guides-site/master/home/modules/ROOT/pages/index.adoc)
-
-- xref:hazelcast-embedded-springboot:ROOT:index.adoc[Hazelcast in SpringBoot]
-- xref:hazelcast-quarkus:ROOT:index.adoc[Hazelcast Client for Quarkus] 
+- xref:hazelcast-embedded-springboot:ROOT:index.adoc[Getting Started with Hazelcast using Spring Boot]
+- xref:springboot-session-replication:ROOT:index.adoc[Filter Based Session Replication with Spring Boot and Hazelcast] 
