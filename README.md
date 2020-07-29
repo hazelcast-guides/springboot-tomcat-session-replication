@@ -1,1 +1,1 @@
-See the guide [here](include published URL).
+See the guide [here](https://hazelcast-guides.github.io/guides-site/springboot-tomcat-session-replication/index.html).

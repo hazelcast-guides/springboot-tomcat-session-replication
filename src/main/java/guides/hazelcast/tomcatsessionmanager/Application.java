@@ -17,11 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class Application {
 
-
     @Bean
     public Config hazelcastConfig() {
         Config config = new Config();
-        config.setProperty( "hazelcast.logging.type", "slf4j" );
+        config.setProperty("hazelcast.logging.type", "slf4j");
         config.setInstanceName("hazelcastInstance");
         JoinConfig joinConfig = config.getNetworkConfig().getJoin();
         joinConfig.getMulticastConfig().setEnabled(false);
@@ -45,13 +44,11 @@ public class Application {
             });
         };
     }
-	
 
     @RequestMapping("/")
     public String homepage(){
-	return "Homepage\n";
+        return "Homepage\n";
     }
-
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

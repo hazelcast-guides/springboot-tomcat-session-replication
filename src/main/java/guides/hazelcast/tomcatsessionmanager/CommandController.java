@@ -9,7 +9,6 @@ import javax.servlet.http.HttpSession;
 @RestController
 public class CommandController {
 
-
     @RequestMapping("/put")
     public CommandResponse put(HttpSession session, @RequestParam(value = "key") String key, @RequestParam(value = "value") String value) {
         session.setAttribute(key, value);
@@ -21,6 +20,5 @@ public class CommandController {
         String value = (String) session.getAttribute(key);
         return new CommandResponse(value);
     }
-
 
 }
