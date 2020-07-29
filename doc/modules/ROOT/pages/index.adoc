@@ -10,9 +10,11 @@ include::{templates-url}/link-to-repo.adoc[]
 
 == What You’ll Learn
 
-Spring Boot is a framework that helps to build microservices easily. In a microservice architecture, there are different options to share data among the running services: one of them is caching, which Spring Boot leverages. It also provides session scope data access using built-in Tomcat HTTP sessions. But when running multiple microservices, it quickly becomes a hassle to replicate sessions and share their data across microservices.
+https://spring.io/projects/spring-boot[Spring Boot] is a framework that helps to build microservices easily. In the Java ecosystem, it's one of the most preferred way of building microservices as of now. In a microservice architecture, there are different options to share data among the running services: one of them is caching, which Spring Boot leverages. It also provides session scope data access using built-in http://tomcat.apache.org/[Tomcat] HTTP sessions. But when running multiple microservices, it quickly becomes a hassle to replicate sessions and share their data across microservices.
 
-In this guide you will learn how to replicate sessions across microservices to provide session data for all microservice applications.
+Imagine that you have a microservice which uses Tomcat HTTP sessions, and you would like to scale it horizontally. You can create multiple microservice instances, and use a load balancer to access them. However, each microservice instance will not have the same session data and the session won't be consistent through microservices when the requests reach different instances. One option is to use sticky sessions but even if you use sticky sessions, you will lose some session data when a microservice instance is crashed/shut down. To prevent any data loss and provide consistency, session data should be replicated through microservice instances.
+
+There are multiple solutions exists for different environments and setups but in this blog post, we will find out how we can replicate sessions through Spring Boot microservices using Hazelcast with only minimal configuration settings. We will also show how it can be ran on Kubernetes environment through a simple demo application.
 
 == Prerequisites
 
