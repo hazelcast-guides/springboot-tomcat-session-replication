@@ -5,7 +5,6 @@
 
 = Spring Boot Tomcat Session Replication using Hazelcast
 
-
 include::{templates-url}/link-to-repo.adoc[]
 
 == What You’ll Learn
@@ -47,12 +46,15 @@ To configure session replication, let's first add some dependencies to the pom.x
     <version>${hazelcast.version}</version>
 </dependency>
 ----
+
 The first dependency is for Hazelcast Tomcat Session Manager, the second one is for Hazelcast IMDG itself.
 
 At this point, only some configuration beans are necessary to enable session replication:
 
 [source,java]
 ----
+// Application.java
+
 @Bean
 public Config hazelcastConfig() {
     Config config = new Config();
@@ -82,7 +84,7 @@ public WebServerFactoryCustomizer<TomcatServletWebServerFactory> customizeTomcat
 }
 ----
 
-- The first bean creates a Hazelcast `Config` object to configure Hazelcast members. We enable the TCI/IP configuration.
+- The first bean creates a Hazelcast `Config` object to configure Hazelcast members. We enable the TCP/IP configuration.
 - The second bean creates the Hazelcast member using the `hazelcastConfig` bean.
 - The third one customizes Tomcat instance in Spring Boot to use Hazelcast Tomcat Session Manager.
 
@@ -90,34 +92,32 @@ Please note that the Hazelcast instance name for `HazelcastSessionManager` objec
 
 == Running the Sample Application
 
-
 In the project directory, build the application:
 [source,bash]
 ----
 $ mvn clean package
 ----
 
-Run the application:
+Run the first instance of the application:
 [source,bash]
 ----
 $ java -Dserver.port=8080 -jar target/springboot-tomcat-session-replication-0.1.0.jar 
 ----
 
-
-
-Open another terminal and start the second application:
+Open another terminal session and start the second application:
 [source,bash]
 ----
 java -Dserver.port=8081 -jar target/springboot-tomcat-session-replication-0.1.0.jar 
 ----
 
-Now, you can make calls to application endpoints to put data and get it back. Firstly, open another terminal and run the following command to put the data into Hazelcast distributed map:
+Now, you can make calls to application endpoints to put data and get it back. Open another terminal session and send a request to `/put` endpoint. This will set the key value pair as a session attribute. Since session data is stored in Hazelcast distributed map, we can read this attribute from the other application instance using the same cookie:
 
 [source,bash]
 ----
 curl --cookie cookies.txt --cookie-jar cookies.txt -s -L "localhost:8080/put?key=myKey&value=hazelcast"
 curl --cookie cookies.txt --cookie-jar cookies.txt -s -L "localhost:8081/get?key=myKey"
 ----
+
 For each command the output should be like the following:
 ----
 {"value":"hazelcast"}
@@ -127,7 +127,7 @@ Notice we have to use cookies when testing the application since the data is sav
 
 == Summary
 
-We created a Spring Boot application that accesses session scope data. To be able to share the session data between each application we used Hazelcast integration. When we  put the key-value pair to our current session as an attribute at port 8080, we could get the attributes from another port. So we accomplished keeping the session data in each microservice application.
+We created a Spring Boot application that accesses session scope data. To be able to share the session data between multiple SpringBoot applications we used Hazelcast Tomcat Session Manager. When we put the key-value pair to our current session as an attribute at port 8080, we could get the attributes from the other application at port 8081.
 
 == See Also
 
