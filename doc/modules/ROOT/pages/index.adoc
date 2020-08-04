@@ -9,11 +9,11 @@ include::{templates-url}/link-to-repo.adoc[]
 
 == What You’ll Learn
 
-https://spring.io/projects/spring-boot[Spring Boot] is a framework that helps to build microservices easily. In the Java ecosystem, it's one of the most preferred way of building microservices as of now. In a microservice architecture, there are different options to share data among the running services: one of them is caching, which Spring Boot leverages. It also provides session scope data access using built-in http://tomcat.apache.org/[Tomcat] HTTP sessions. But when running multiple microservices, it quickly becomes a hassle to replicate sessions and share their data across microservices.
+https://spring.io/projects/spring-boot[Spring Boot] is a framework that helps to build microservices easily. In the Java ecosystem, it's one of the most preferred ways of building microservices as of now. In a microservice architecture, there are different options to share data among the running services: one of them is caching, which Spring Boot leverages. It also provides session scope data access using built-in http://tomcat.apache.org/[Tomcat] HTTP sessions. But when running multiple microservices, it quickly becomes a hassle to replicate sessions and share their data across microservices.
 
 Imagine that you have a microservice which uses Tomcat HTTP sessions, and you would like to scale it horizontally. You can create multiple microservice instances, and use a load balancer to access them. However, each microservice instance will not have the same session data and the session won't be consistent through microservices when the requests reach different instances. One option is to use sticky sessions but even if you use sticky sessions, you will lose some session data when a microservice instance is crashed/shut down. To prevent any data loss and provide consistency, session data should be replicated through microservice instances.
 
-There are multiple solutions exists for different environments and setups but in this blog post, we will find out how we can replicate sessions through Spring Boot microservices using Hazelcast with only minimal configuration settings. We will also show how it can be ran on Kubernetes environment through a simple demo application.
+Multiple solutions exist for different environments and setups but in this blog post, we will find out how we can replicate sessions through Spring Boot microservices using Hazelcast with only minimal configuration settings.
 
 == Prerequisites
 
@@ -25,9 +25,9 @@ include::{templates-url}/microservices/prerequisites.adoc[]
 
 The application is a basic Spring Boot application having 3 endpoints:
 
-- / is the homepage returning “Homepage” string only
-- /put is the page where key and value are saved to the current session as an attribute
-- /get is the page where the values in the current session can be obtained by keys
+- `/` is the homepage returning “Homepage” string only
+- `/put` is the page where key and value are saved to the current session as an attribute
+- `/get` is the page where the values in the current session can be obtained by keys
 
 == Session Replication using Hazelcast Tomcat Session Manager
 
@@ -58,7 +58,7 @@ At this point, only some configuration beans are necessary to enable session rep
 @Bean
 public Config hazelcastConfig() {
     Config config = new Config();
-    config.setProperty( "hazelcast.logging.type", "slf4j" );
+    config.setProperty("hazelcast.logging.type", "slf4j");
     config.setInstanceName("hazelcastInstance");
     JoinConfig joinConfig = config.getNetworkConfig().getJoin();
     joinConfig.getMulticastConfig().setEnabled(false);
@@ -84,8 +84,8 @@ public WebServerFactoryCustomizer<TomcatServletWebServerFactory> customizeTomcat
 }
 ----
 
-- The first bean creates a Hazelcast `Config` object to configure Hazelcast members. We enable the TCP/IP configuration.
-- The second bean creates the Hazelcast member using the `hazelcastConfig` bean.
+- The first bean creates a Hazelcast Config object to configure Hazelcast members. We enable the TCP/IP configuration.
+- The second bean creates a Hazelcast member using the `hazelcastConfig` bean.
 - The third one customizes Tomcat instance in Spring Boot to use Hazelcast Tomcat Session Manager.
 
 Please note that the Hazelcast instance name for `HazelcastSessionManager` object and the instance name for Hazelcast config bean should be the same. Otherwise, `HazelcastSessionManager` wouldn't access the running Hazelcast instance.
@@ -95,13 +95,13 @@ Please note that the Hazelcast instance name for `HazelcastSessionManager` objec
 In the project directory, build the application:
 [source,bash]
 ----
-$ mvn clean package
+mvn clean package
 ----
 
 Run the first instance of the application:
 [source,bash]
 ----
-$ java -Dserver.port=8080 -jar target/springboot-tomcat-session-replication-0.1.0.jar
+java -Dserver.port=8080 -jar target/springboot-tomcat-session-replication-0.1.0.jar
 ----
 
 Open another terminal session and start the second application:
@@ -110,7 +110,9 @@ Open another terminal session and start the second application:
 java -Dserver.port=8081 -jar target/springboot-tomcat-session-replication-0.1.0.jar
 ----
 
-Now, you can make calls to application endpoints to put data and get it back. Open another terminal session and send a request to `/put` endpoint. This will set the key value pair as a session attribute. Since session data is stored in Hazelcast distributed map, we can read this attribute from the other application instance using the same cookie:
+Now, you can issue HTTP calls to application endpoints to put data and get it back. Open another terminal session and send a request to `/put` endpoint. This will set the key-value pair as a session attribute.
+
+Since session data is stored in Hazelcast distributed map, we can read this attribute from the other application instance using the same cookie:
 
 [source,bash]
 ----
