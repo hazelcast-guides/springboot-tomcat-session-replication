@@ -95,29 +95,29 @@ Please note that the Hazelcast instance name for `HazelcastSessionManager` objec
 In the project directory, build the application:
 [source,bash]
 ----
-$ mvn clean package
+mvn clean package
 ----
 
 Run the first instance of the application:
 [source,bash]
 ----
-$ java -Dserver.port=8080 -jar target/springboot-tomcat-session-replication-0.1.0.jar
+java -Dserver.port=8080 -jar target/springboot-tomcat-session-replication-0.1.0.jar
 ----
 
 Open another terminal session and start the second application:
 [source,bash]
 ----
-$ java -Dserver.port=8081 -jar target/springboot-tomcat-session-replication-0.1.0.jar
+java -Dserver.port=8081 -jar target/springboot-tomcat-session-replication-0.1.0.jar
 ----
 
-Now, you can issue HTTP calls to application endpoints to put data and get it back. Open another terminal session and send a request to `/put` endpoint. This will set the key-value pair as a session attribute. 
+Now, you can issue HTTP calls to application endpoints to put data and get it back. Open another terminal session and send a request to `/put` endpoint. This will set the key-value pair as a session attribute.
 
 Since session data is stored in Hazelcast distributed map, we can read this attribute from the other application instance using the same cookie:
 
 [source,bash]
 ----
-$ curl --cookie cookies.txt --cookie-jar cookies.txt -s -L "localhost:8080/put?key=myKey&value=hazelcast"
-$ curl --cookie cookies.txt --cookie-jar cookies.txt -s -L "localhost:8081/get?key=myKey"
+curl --cookie cookies.txt --cookie-jar cookies.txt -s -L "localhost:8080/put?key=myKey&value=hazelcast"
+curl --cookie cookies.txt --cookie-jar cookies.txt -s -L "localhost:8081/get?key=myKey"
 ----
 
 For each command the output should be like the following:
