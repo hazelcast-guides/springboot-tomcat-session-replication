@@ -110,7 +110,9 @@ Open another terminal session and start the second application:
 $ java -Dserver.port=8081 -jar target/springboot-tomcat-session-replication-0.1.0.jar
 ----
 
-Now, you can make calls to application endpoints to put data and get it back. Open another terminal session and send a request to `/put` endpoint. This will set the key-value pair as a session attribute. Since session data is stored in Hazelcast distributed map, we can read this attribute from the other application instance using the same cookie:
+Now, you can issue HTTP calls to application endpoints to put data and get it back. Open another terminal session and send a request to `/put` endpoint. This will set the key-value pair as a session attribute. 
+
+Since session data is stored in Hazelcast distributed map, we can read this attribute from the other application instance using the same cookie:
 
 [source,bash]
 ----
