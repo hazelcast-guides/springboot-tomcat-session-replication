@@ -37,7 +37,7 @@ To configure session replication, let's first add some dependencies to the pom.x
 ----
 <dependency>
     <groupId>com.hazelcast</groupId>
-    <artifactId>hazelcast-tomcat85-sessionmanager</artifactId>
+    <artifactId>hazelcast-tomcat9-sessionmanager</artifactId>
     <version>${hazelcast-tomcat-sessionmanager.version}</version>
 </dependency>
 <dependency>

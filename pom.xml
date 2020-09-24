@@ -65,7 +65,7 @@
         </dependency>
         <dependency>
             <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast-tomcat85-sessionmanager</artifactId>
+            <artifactId>hazelcast-tomcat9-sessionmanager</artifactId>
             <version>${hazelcast-tomcat-sessionmanager.version}</version>
         </dependency>
         <dependency>
