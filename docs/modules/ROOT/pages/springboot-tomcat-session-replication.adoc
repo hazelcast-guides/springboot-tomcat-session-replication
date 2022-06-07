@@ -1,13 +1,17 @@
-:github-address: https://github.com/hazelcast-guides/springboot-tomcat-session-replication
-:hazelcast: Hazelcast IMDG
-:framework: Spring Boot
-:templates-url: templates:ROOT:page$
-
 = Spring Boot Tomcat Session Replication using Hazelcast
-
-include::{templates-url}/link-to-repo.adoc[]
+:templates-url: templates:ROOT:page$
+:page-layout: tutorial
+:page-product: imdg
+:page-categories: Caching, Spring Boot, Microservices
+:page-lang: java
+:page-edition: 
+:page-est-time: 15 mins
+:framework: Spring Boot
+:description: In this tutorial, you'll learn how to use Hazelcast with Tomcat session replication in Spring Boot microservices.
 
 == What You’ll Learn
+
+{description}
 
 https://spring.io/projects/spring-boot[Spring Boot] is a framework that helps to build microservices easily. In the Java ecosystem, it's one of the most preferred ways of building microservices as of now. In a microservice architecture, there are different options to share data among the running services: one of them is caching, which Spring Boot leverages. It also provides session scope data access using built-in http://tomcat.apache.org/[Tomcat] HTTP sessions. But when running multiple microservices, it quickly becomes a hassle to replicate sessions and share their data across microservices.
 
@@ -15,9 +19,7 @@ Imagine that you have a microservice which uses Tomcat HTTP sessions, and you wo
 
 Multiple solutions exist for different environments and setups but in this blog post, we will find out how we can replicate sessions through Spring Boot microservices using Hazelcast with only minimal configuration settings.
 
-== Prerequisites
-
-- ~15 minutes
+== Before you Begin
 
 include::{templates-url}/microservices/prerequisites.adoc[]
 
@@ -129,9 +131,9 @@ Notice we have to use cookies when testing the application since the data is sav
 
 == Summary
 
-We created a Spring Boot application that accesses session scope data. To be able to share the session data between multiple SpringBoot applications we used Hazelcast Tomcat Session Manager. When we put the key-value pair to our current session as an attribute at port 8080, we could get the attributes from the other application at port 8081.
+You created a Spring Boot application that accesses session scope data. To be able to share the session data between multiple Spring Boot applications you used Hazelcast Tomcat session manager. When you put the key-value pair to the current session as an attribute at port 8080, you could get the attributes from the other application at port 8081.
 
 == See Also
 
-- xref:hazelcast-embedded-springboot:ROOT:index.adoc[Getting Started with Hazelcast using Spring Boot]
-- xref:springboot-webfilter-session-replication:ROOT:index.adoc[Filter Based Session Replication with Spring Boot and Hazelcast]
+- xref:hazelcast-embedded-springboot.adoc[]
+- xref:springboot-webfilter-session-replication.adoc[]
